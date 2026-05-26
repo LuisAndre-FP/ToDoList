@@ -1,10 +1,10 @@
 # ToDoList
 
-Uma aplicação web de gerenciamento de tarefas com backend em Node.js e frontend em React.
+Uma aplicação web fullstack de gerenciamento de tarefas com backend em Node.js e frontend em React.
 
 ## O que é este projeto?
 
-Um app de **lista de tarefas (To-Do List)** fullstack. O usuário pode criar, visualizar, editar e excluir tarefas. O projeto foi construído para praticar o desenvolvimento de APIs REST com Node.js integradas a um frontend React moderno.
+Um app de **lista de tarefas (To-Do List)** completo. O usuário pode criar, visualizar, editar, marcar como concluída e excluir tarefas. O projeto foi construído para praticar o desenvolvimento de APIs REST com Node.js integradas a um frontend React moderno.
 
 ## Tecnologias
 
@@ -15,6 +15,7 @@ Um app de **lista de tarefas (To-Do List)** fullstack. O usuário pode criar, vi
 
 **Frontend**
 - React 19 — interface do usuário
+- Tailwind CSS — estilização
 - Vite — bundler e servidor de desenvolvimento
 
 ## Estrutura do projeto
@@ -30,9 +31,12 @@ ToDoLIst/
 │   └── index.js           # Ponto de entrada do servidor
 └── frontend/
     └── src/
-        ├── components/    # Componentes reutilizáveis
-        ├── pages/         # Páginas da aplicação
-        └── services/      # Chamadas à API
+        ├── components/
+        │   ├── TaskCard.jsx   # Card de cada tarefa (editar, deletar, marcar)
+        │   └── TaskForm.jsx   # Formulário para criar nova tarefa
+        ├── services/
+        │   └── api.js         # Funções de comunicação com a API
+        └── App.jsx            # Componente principal
 ```
 
 ## Como rodar localmente
@@ -93,8 +97,10 @@ O app estará disponível em `http://localhost:5173`.
 | PUT    | /api/tasks/:id   | Atualiza uma tarefa     |
 | DELETE | /api/tasks/:id   | Remove uma tarefa       |
 
-## Status do projeto
+## Funcionalidades
 
-- [x] Backend com CRUD completo
-- [x] Arquitetura MVC no backend
-- [ ] Interface React (em desenvolvimento)
+- Listar todas as tarefas
+- Criar nova tarefa com título
+- Editar título e descrição de uma tarefa
+- Marcar tarefa como concluída (checkbox)
+- Deletar tarefa
