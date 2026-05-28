@@ -32,6 +32,13 @@ function TaskForm({ onTaskCreated }) {
         onChange={(e) => setTitle(e.target.value)}
         className="bg-gray-800 text-white placeholder-gray-500 border-gray-700 rounded lg px-4 py-3 focus:outline-none focus:border-blue-500 "
       />
+      <input
+        type="text"
+        placeholder="Descrição da tarefa (opcional)"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        className="bg-gray-800 text-white placeholder-gray-500 border-gray-700 rounded lg px-4 py-3 focus:outline-none focus:border-blue-500 "
+      />
       <button
         type="submit"
         className="bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg px-4 py-3 transition-colors"
