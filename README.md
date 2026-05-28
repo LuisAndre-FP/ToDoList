@@ -12,6 +12,7 @@ Um app de **lista de tarefas (To-Do List)** completo. O usuário pode criar, vis
 - Node.js + Express — servidor HTTP e roteamento
 - PostgreSQL — banco de dados relacional para persistência das tarefas
 - dotenv — gerenciamento de variáveis de ambiente
+- swagger-jsdoc + swagger-ui-express — documentação interativa da API
 
 **Frontend**
 - React 19 — interface do usuário
@@ -76,6 +77,8 @@ node index.js
 ```
 
 A API estará disponível em `http://localhost:3000`.
+
+A documentação interativa (Swagger UI) estará disponível em `http://localhost:3000/api-docs`.
 
 ### Frontend
 
