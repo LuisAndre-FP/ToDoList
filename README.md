@@ -12,7 +12,9 @@ Um app de **lista de tarefas (To-Do List)** completo. O usuário pode criar, vis
 - Node.js + Express — servidor HTTP e roteamento
 - PostgreSQL — banco de dados relacional para persistência das tarefas
 - dotenv — gerenciamento de variáveis de ambiente
-- swagger-jsdoc + swagger-ui-express — documentação interativa da API
+- helmet — headers de segurança HTTP
+- express-rate-limit — proteção contra abuso de requisições
+- swagger-jsdoc + swagger-ui-express — documentação interativa da API (apenas em desenvolvimento)
 
 **Frontend**
 - React 19 — interface do usuário
@@ -29,7 +31,10 @@ ToDoLIst/
 │   │   ├── controllers/   # Lógica das requisições HTTP
 │   │   ├── models/        # Queries SQL
 │   │   └── routes/        # Definição das rotas da API
+│   ├── .dockerignore
+│   ├── Dockerfile
 │   └── index.js           # Ponto de entrada do servidor
+├── docker-compose.example.yml  # Template para rodar com Docker
 └── frontend/
     └── src/
         ├── components/
@@ -62,6 +67,7 @@ DB_NAME=todo_app
 DB_USER=seu_usuario
 DB_PASSWORD=sua_senha
 PORT=3000
+CORS_ORIGIN=http://localhost:5173
 ```
 
 Crie o banco de dados no PostgreSQL:
@@ -78,7 +84,7 @@ node index.js
 
 A API estará disponível em `http://localhost:3000`.
 
-A documentação interativa (Swagger UI) estará disponível em `http://localhost:3000/api-docs`.
+A documentação interativa (Swagger UI) estará disponível em `http://localhost:3000/api-docs` (apenas quando `NODE_ENV` não for `production`).
 
 ### Frontend
 
@@ -89,6 +95,22 @@ npm run dev
 ```
 
 O app estará disponível em `http://localhost:5173`.
+
+## Como rodar com Docker
+
+Copie o arquivo de exemplo e preencha com suas credenciais:
+
+```bash
+cp docker-compose.example.yml docker-compose.yml
+```
+
+Edite o `docker-compose.yml` com sua senha real e suba os containers:
+
+```bash
+docker-compose up --build
+```
+
+> **Atenção:** o `docker-compose.yml` está no `.gitignore` pois pode conter credenciais reais. Nunca versione esse arquivo.
 
 ## Endpoints da API
 

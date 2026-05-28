@@ -78,6 +78,8 @@ const update = async (req, res) => {
 
 const remove = async (req, res) => {
   try {
+    const task = await getTaskById(req.params.id);
+    if (!task) return res.status(404).json({ error: "Tarefa não encontrada" });
     await deleteTask(req.params.id);
     res.status(200).json({ message: "Tarefa deletada com sucesso" });
   } catch (error) {
