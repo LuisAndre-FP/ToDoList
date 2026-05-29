@@ -1,19 +1,21 @@
 # ToDoList
 
-Uma aplicação web fullstack de gerenciamento de tarefas com backend em Node.js e frontend em React.
+Uma aplicação web fullstack de gerenciamento de tarefas com autenticação JWT, backend em Node.js e frontend em React.
 
 ## O que é este projeto?
 
-Um app de **lista de tarefas (To-Do List)** completo. O usuário pode criar, visualizar, editar, marcar como concluída e excluir tarefas. O projeto foi construído para praticar o desenvolvimento de APIs REST com Node.js integradas a um frontend React moderno.
+Um app de **lista de tarefas (To-Do List)** completo com sistema de contas. O usuário cria uma conta, faz login e gerencia suas próprias tarefas — criar, visualizar, editar, marcar como concluída e excluir. As tarefas de cada usuário são isoladas das de outros.
 
 ## Tecnologias
 
 **Backend**
 - Node.js + Express — servidor HTTP e roteamento
-- PostgreSQL — banco de dados relacional para persistência das tarefas
-- dotenv — gerenciamento de variáveis de ambiente
+- PostgreSQL — banco de dados relacional para persistência
+- bcrypt — hash seguro de senhas
+- jsonwebtoken — geração e verificação de tokens JWT
 - helmet — headers de segurança HTTP
-- express-rate-limit — proteção contra abuso de requisições
+- express-rate-limit — proteção contra brute force e abuso de requisições
+- dotenv — gerenciamento de variáveis de ambiente
 - swagger-jsdoc + swagger-ui-express — documentação interativa da API (apenas em desenvolvimento)
 
 **Frontend**
@@ -29,6 +31,8 @@ ToDoLIst/
 │   ├── src/
 │   │   ├── config/        # Conexão com o banco de dados
 │   │   ├── controllers/   # Lógica das requisições HTTP
+│   │   ├── middleware/
+│   │   │   └── auth.js    # Middleware de verificação do token JWT
 │   │   ├── models/        # Queries SQL
 │   │   └── routes/        # Definição das rotas da API
 │   ├── .dockerignore
@@ -40,9 +44,12 @@ ToDoLIst/
         ├── components/
         │   ├── TaskCard.jsx   # Card de cada tarefa (editar, deletar, marcar)
         │   └── TaskForm.jsx   # Formulário para criar nova tarefa
+        ├── pages/
+        │   ├── LoginPage.jsx  # Tela de login e cadastro
+        │   └── TasksPage.jsx  # Tela principal das tarefas
         ├── services/
         │   └── api.js         # Funções de comunicação com a API
-        └── App.jsx            # Componente principal
+        └── App.jsx            # Componente raiz e controle de autenticação
 ```
 
 ## Como rodar localmente
@@ -68,12 +75,30 @@ DB_USER=seu_usuario
 DB_PASSWORD=sua_senha
 PORT=3000
 CORS_ORIGIN=http://localhost:5173
+JWT_SECRET=uma_chave_secreta_longa_e_aleatoria
 ```
 
-Crie o banco de dados no PostgreSQL:
+Crie o banco de dados e as tabelas no PostgreSQL:
 
 ```sql
 CREATE DATABASE todo_app;
+
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password TEXT NOT NULL,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE task (
+  id SERIAL PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT,
+  completed BOOLEAN DEFAULT FALSE,
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
 ```
 
 Inicie o servidor:
@@ -104,19 +129,28 @@ Copie o arquivo de exemplo e preencha com suas credenciais:
 cp docker-compose.example.yml docker-compose.yml
 ```
 
-Edite o `docker-compose.yml` com sua senha real e suba os containers:
+Edite o `docker-compose.yml` com sua senha real e sua chave JWT, depois suba os containers:
 
 ```bash
 docker-compose up --build
 ```
 
-> **Atenção:** o `docker-compose.yml` está no `.gitignore` pois pode conter credenciais reais. Nunca versione esse arquivo.
+> **Atenção:** o `docker-compose.yml` está no `.gitignore` pois contém credenciais reais. Nunca versione esse arquivo.
 
 ## Endpoints da API
 
+### Autenticação
+
+| Método | Rota             | Descrição                        |
+|--------|------------------|----------------------------------|
+| POST   | /auth/register   | Cadastra um novo usuário         |
+| POST   | /auth/login      | Faz login e retorna o token JWT  |
+
+### Tarefas (requer token JWT no header `Authorization: Bearer <token>`)
+
 | Método | Rota             | Descrição               |
 |--------|------------------|-------------------------|
-| GET    | /api/tasks       | Lista todas as tarefas  |
+| GET    | /api/tasks       | Lista as tarefas do usuário  |
 | GET    | /api/tasks/:id   | Busca uma tarefa por ID |
 | POST   | /api/tasks       | Cria uma nova tarefa    |
 | PUT    | /api/tasks/:id   | Atualiza uma tarefa     |
@@ -124,8 +158,10 @@ docker-compose up --build
 
 ## Funcionalidades
 
-- Listar todas as tarefas
-- Criar nova tarefa com título
+- Cadastro e login com email e senha
+- Autenticação via token JWT (válido por 7 dias)
+- Cada usuário vê e gerencia apenas suas próprias tarefas
+- Criar nova tarefa com título e descrição opcional
 - Editar título e descrição de uma tarefa
 - Marcar tarefa como concluída (checkbox)
 - Deletar tarefa

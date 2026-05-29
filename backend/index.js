@@ -7,25 +7,37 @@ const swaggerJsdoc = require("swagger-jsdoc");
 require("dotenv").config();
 
 const taskRoutes = require("./src/routes/task");
+const authRoutes = require("./src/routes/auth");
 
 const app = express();
 
 app.use(helmet());
 
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || "http://localhost:5173",
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+  }),
+);
 
 app.use(express.json({ limit: "10kb" }));
 
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
+  windowMs: 15 * 60 * 1000,
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: "Muitas requisições, tente novamente em 15 minutos." },
 });
 app.use("/api/", limiter);
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Muitas tentativas, tente novamente em 15 minutos." },
+});
+app.use("/auth", authLimiter);
 
 if (process.env.NODE_ENV !== "production") {
   const swaggerOptions = {
@@ -45,6 +57,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 app.use("/api/tasks", taskRoutes);
+app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Bem-vindo à API de To-Do List!" });

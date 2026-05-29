@@ -25,6 +25,7 @@ services:
       DB_USER: postgres
       DB_PASSWORD: SUA_SENHA_AQUI
       PORT: 3000
+      JWT_SECRET: sua chave_secreta_aqui
       NODE_ENV: production
       CORS_ORIGIN: http://localhost:5173
     depends_on:
