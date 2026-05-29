@@ -1,4 +1,8 @@
-const API_URL = "http://localhost:3000/api/tasks";
+const API_URL = "http://localhost:3000";
+
+const getToken = () => {
+  return localStorage.getItem("token");
+};
 
 // export na frente de cada função para que possam ser importadas e usadas em outros arquivos do projeto,
 // como componentes React.
@@ -9,17 +13,40 @@ const API_URL = "http://localhost:3000/api/tasks";
 // json.stringify é usado para converter um objeto JavaScript em uma string JSON,
 // que é o formato esperado pelo backend.
 
+export const login = async (email, password) => {
+  const response = await fetch(`${API_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  return response.json();
+};
+
+export const register = async (email, password) => {
+  const response = await fetch(`${API_URL}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+  return response.json();
+};
+
 export const getTasks = async () => {
-  const response = await fetch(API_URL);
+  const response = await fetch(`${API_URL}/api/tasks`, {
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
   return response.json();
 };
 // A função getTasks faz uma requisição GET para a URL da API e retorna a resposta em formato JSON,
 // que é o formato esperado pelo frontend.
 
 export const createTask = async (task) => {
-  const response = await fetch(API_URL, {
+  const response = await fetch(`${API_URL}/api/tasks`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(task),
   });
   return response.json();
@@ -30,9 +57,12 @@ export const createTask = async (task) => {
 // que são convertidas em string JSON usando JSON.stringify.
 
 export const updateTask = async (id, data) => {
-  const response = await fetch(`${API_URL}/${id}`, {
+  const response = await fetch(`${API_URL}/api/tasks/${id}`, {
     method: "PUT",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(data),
   });
   return response.json();
@@ -41,6 +71,9 @@ export const updateTask = async (id, data) => {
 // O corpo da requisição contém os dados atualizados da tarefa, que são convertidos em string JSON usando JSON.stringify.
 
 export const deleteTask = async (id) => {
-  await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+  await fetch(`${API_URL}/api/tasks/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${getToken()}` },
+  });
 };
 // A função deleteTask faz uma requisição DELETE para a URL da API, incluindo o ID da tarefa a ser deletada.

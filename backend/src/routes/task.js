@@ -7,6 +7,9 @@ const {
   update,
   remove,
 } = require("../controllers/taskController");
+const authMiddleware = require("../middleware/auth");
+
+router.use(authMiddleware);
 
 // /** @swagger são comentarios especiais usados para documentar a API usando o Swagger.
 // Eles descrevem os endpoints, os parâmetros, as respostas e os modelos de dados da API.

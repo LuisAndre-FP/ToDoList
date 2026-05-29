@@ -9,8 +9,6 @@
 // o cliente recebe uma mensagem clara sobre o que deu errado.
 //
 
-const pool = require("../config/db");
-// Importa o pool de conexões com o banco de dados para poder usar nas funções abaixo
 const {
   getAllTasks,
   getTaskById,
@@ -22,7 +20,7 @@ const {
 
 const index = async (req, res) => {
   try {
-    const tasks = await getAllTasks();
+    const tasks = await getAllTasks(req.userId);
     res.json(tasks);
   } catch (error) {
     res.status(500).json({ error: "Erro ao buscar tarefas" });
@@ -33,7 +31,7 @@ const index = async (req, res) => {
 
 const show = async (req, res) => {
   try {
-    const task = await getTaskById(req.params.id);
+    const task = await getTaskById(req.params.id, req.userId);
     if (!task) return res.status(404).json({ error: "Tarefa não encontrada" });
     res.json(task);
   } catch (error) {
@@ -49,7 +47,7 @@ const create = async (req, res) => {
   try {
     const { title, description } = req.body;
     if (!title) return res.status(400).json({ error: "Título é obrigatório" });
-    const task = await createTask(title, description);
+    const task = await createTask(title, description, req.userId);
     res.status(201).json(task);
   } catch (error) {
     res.status(500).json({ error: "Erro ao criar tarefa" });
@@ -63,7 +61,7 @@ const create = async (req, res) => {
 const update = async (req, res) => {
   try {
     const { title, description, completed } = req.body;
-    const task = await updateTask(req.params.id, title, description, completed);
+    const task = await updateTask(req.params.id, title, description, completed, req.userId);
     if (!task) return res.status(404).json({ error: "Tarefa não encontrada" });
     res.json(task);
   } catch (error) {
@@ -78,9 +76,9 @@ const update = async (req, res) => {
 
 const remove = async (req, res) => {
   try {
-    const task = await getTaskById(req.params.id);
+    const task = await getTaskById(req.params.id, req.userId);
     if (!task) return res.status(404).json({ error: "Tarefa não encontrada" });
-    await deleteTask(req.params.id);
+    await deleteTask(req.params.id, req.userId);
     res.status(200).json({ message: "Tarefa deletada com sucesso" });
   } catch (error) {
     res.status(500).json({ error: "Erro ao deletar tarefa" });
