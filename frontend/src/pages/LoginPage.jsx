@@ -41,10 +41,16 @@ function LoginPage({ onLogin }) {
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
-      <div className="bg-gray-800 rounded-xl p-8 w-full max-w-sm border border-gray-700">
-        <h1 className="text-2xl font-bold text-white mb-6 text-center">
+      <div className="w-full max-w-md">
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-bold text-white">Lista de Tarefas</h1>
+          <p className="text-gray-400 mt-2">Organize seu dia a dia</p>
+        </div>
+
+      <div className="bg-gray-800 rounded-xl p-8 w-full border border-gray-700">
+        <h2 className="text-2xl font-bold text-white mb-6 text-center">
           {isLogin ? "Entrar" : "Criar conta"}
-        </h1>
+        </h2>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
@@ -91,6 +97,7 @@ function LoginPage({ onLogin }) {
             {isLogin ? "Cadastre-se" : "Entrar"}
           </button>
         </p>
+      </div>
       </div>
     </div>
   );
